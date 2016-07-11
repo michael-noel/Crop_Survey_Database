@@ -9,6 +9,8 @@
 ##############################################################################
 
 library(XLConnect)
+library(foreach)
+library(parallel)
 
 wb <- loadWorkbook("/Users/U8004755/Google Drive/Data/RICE-PRE/RICE-PRE_2015DS/ADN_2015DS/Farmers Practice R1.xls")
 
@@ -54,131 +56,48 @@ HQ <- rep(1:10)
 
 # Crop growth ------------------------------------------------------------------
 # Tillers ----------------------------------------------------------------------
-tillers_Q1 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 6,
-                            endRow = 9, endCol = 6, header = FALSE)
-names(tillers_Q1) <- "tillers"
 
-tillers_Q2 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 6,
-                            endRow = 9,  endCol = 6, header = FALSE)
-names(tillers_Q2) <- "tillers"
-
-tillers_Q3 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 7,
-                            endRow = 9, endCol = 7, header = FALSE)
-names(tillers_Q3) <- "tillers"
-
-tillers_Q4 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 8,
-                            endRow = 9, endCol = 8, header = FALSE)
-names(tillers_Q4) <- "tillers"
-
-tillers_Q5 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 9,
-                            endRow = 9, endCol = 9, header = FALSE)
-names(tillers_Q5) <- "tillers"
-
-tillers_Q6 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 10,
-                            endRow = 9, endCol = 10, header = FALSE)
-names(tillers_Q6) <- "tillers"
-
-tillers_Q7 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 11,
-                            endRow = 9, endCol = 11, header = FALSE)
-names(tillers_Q7) <- "tillers"
-
-tillers_Q8 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 12,
-                            endRow = 9, endCol = 12, header = FALSE)
-names(tillers_Q8) <- "tillers"
-
-tillers_Q9 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 13,
-                            endRow = 9, endCol = 13, header = FALSE)
-names(tillers_Q9) <- "tillers"
-
-tillers_Q10 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 9, startCol = 14,
-                             endRow = 9, endCol = 14, header = FALSE)
-names(tillers_Q10) <- "tillers"
-
-tillers <- rbind(tillers_Q1, tillers_Q2, tillers_Q3, tillers_Q4, tillers_Q5,
-                 tillers_Q6, tillers_Q7, tillers_Q8, tillers_Q9, tillers_Q10)
+tillers <- data.table::rbindlist(foreach(i = 6:14) %do% {
+  readWorksheet(wb, "Form 2 Visit 1", startRow = 9,
+                startCol = as.numeric(paste(i)), endRow = 9,
+                endCol = as.numeric(paste(i)), header = FALSE)
+}
+)
 
 # Leaves -----------------------------------------------------------------------
-
-leaves_Q1 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 11, startCol = 6,
-                           endRow = 11, endCol = 6, header = FALSE)
-names(leaves_Q1) <- "leaves"
-
-leaves_Q2 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 11, startCol = 6,
-                           endRow = 11, endCol = 6, header = FALSE)
-names(leaves_Q2) <- "leaves"
-
-leaves_Q3 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 11, startCol = 7,
-                           endRow = 11, endCol = 7, header = FALSE)
-names(leaves_Q3) <- "leaves"
-
-leaves_Q4 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 11, startCol = 8,
-                           endRow = 11, endCol = 8, header = FALSE)
-names(leaves_Q4) <- "leaves"
-
-leaves_Q5 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 11, startCol = 9,
-                           endRow = 11, endCol = 9, header = FALSE)
-names(leaves_Q5) <- "leaves"
-
-leaves_Q6 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 11, startCol = 10,
-                           endRow = 11, endCol = 10, header = FALSE)
-names(leaves_Q6) <- "leaves"
-
-leaves_Q7 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 11, startCol = 11,
-                           endRow = 11, endCol = 11, header = FALSE)
-names(leaves_Q7) <- "leaves"
-
-leaves_Q8 <- readWorksheet(wb,  "Form 2 Visit 1", startRow = 11, startCol = 12,
-                           endRow = 11, endCol = 12, header = FALSE)
-names(leaves_Q8) <- "leaves"
-
-leaves_Q9 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 11, startCol = 13,
-                           endRow = 11, endCol = 13, header = FALSE)
-names(leaves_Q9) <- "leaves"
-
-leaves_Q10 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 11, startCol = 14,
-                            endRow = 11, endCol = 14, header = FALSE)
-names(leaves_Q10) <- "leaves"
-
-leaves <- rbind(leaves_Q1, leaves_Q2, leaves_Q3, leaves_Q4, leaves_Q5,
-                leaves_Q6, leaves_Q7, leaves_Q8, leaves_Q9, leaves_Q10)
+leaves <- data.table::rbindlist(foreach(i = 6:14) %do% {
+  readWorksheet(wb, "Form 2 Visit 1", startRow = 11,
+                startCol = as.numeric(paste(i)), endRow = 9,
+                endCol = as.numeric(paste(i)), header = FALSE)
+}
+)
 
 # Weeds ------------------------------------------------------------------------
 # weed above -------------------------------------------------------------------
-weed_area <- c("A", "B", "C")
+weed_area <- rep(c("A", "B", "C"), 2)
 
-weed_above_A <- readWorksheet(wb, "Form 2 Visit 1", startRow = 62, startCol = 3,
-                              endRow = 62, endCol = 3, header = FALSE)
-names(weed_above_A) <- "Weed_Above"
+weed_above <- data.table::rbindlist(foreach(i = 3:5) %do% {
+  readWorksheet(wb, "Form 2 Visit 1", startRow = 62,
+                startCol = as.numeric(paste(i)),
+                endRow = 62, endCol = as.numeric(paste(i)),
+                header = FALSE)
+}
+)
 
-weed_above_B <- readWorksheet(wb, "Form 2 Visit 1", startRow = 62, startCol = 4,
-                              endRow = 62, endCol = 4, header = FALSE)
-names(weed_above_B) <- "Weed_Above"
+weed_below <- data.table::rbindlist(foreach(i = 3:5) %do% {
+  readWorksheet(wb, "Form 2 Visit 1", startRow = 63,
+                startCol = as.numeric(paste(i)),
+                endRow = 63, endCol = as.numeric(paste(i)),
+                header = FALSE)
+}
+)
 
-weed_above_C <- readWorksheet(wb, "Form 2 Visit 1", startRow = 62, startCol = 5,
-                              endRow = 62, endCol = 5, header = FALSE)
-names(weed_above_C) <- "Weed_Above"
-
-weed_above <- rbind(weed_above_A, weed_above_B, weed_above_C)
-
-# weed below -------------------------------------------------------------------
-weed_below_A <- readWorksheet(wb, "Form 2 Visit 1", startRow = 63, startCol = 3,
-                              endRow = 63, endCol = 3, header = FALSE)
-names(weed_below_A) <- "Weed_below"
-
-weed_below_B <- readWorksheet(wb, "Form 2 Visit 1", startRow = 63, startCol = 4,
-                              endRow = 63, endCol = 4, header = FALSE)
-names(weed_below_B) <- "Weed_below"
-
-weed_below_C <- readWorksheet(wb, "Form 2 Visit 1", startRow = 63, startCol = 5,
-                              endRow = 63, endCol = 5, header = FALSE)
-names(weed_below_C) <- "Weed_below"
-
-weed_below <- rbind(weed_below_A, weed_below_B, weed_below_C)
-
-weed_canopy <- cbind(weed_area, weed_above, weed_below)
+weed_canopy <- cbind(weed_area, weed_area, weed_above, weed_below)
 
 
 # weed rank --------------------------------------------------------------------
+
+
 
 S.rankA <- readWorksheet(wb, "Form 2 Visit 1", startRow = 17, startCol = 11,
                          endRow = 17, endCol = 11, header = FALSE)
@@ -230,308 +149,47 @@ names(SD.rankC) <- "SD.Rank.C"
 
 # weed species -----------------------------------------------------------------
 
-weed.sp1 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 17, startCol = 15,
-                          endRow = 17, endCol = 17, header = FALSE)
-names(weed.sp1) <- "Weed.Species.1"
+species
+weed_species <- data.table::rbindlist(foreach(i = 17:20) %do% {
+  readWorksheet(wb, "Form 2 Visit 1", startRow = 17,
+                startCol = as.numeric(paste(i)),
+                endRow = 17, endCol = as.numeric(paste(i)),
+                header = FALSE)
+}
+)
 
-weed.sp2 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 18, startCol = 15,
-                          endRow = 18, endCol = 17, header = FALSE)
-names(weed.sp2) <- "Weed.Species.2"
-
-weed.sp3 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 19, startCol = 15,
-                          endRow = 19, endCol = 17, header = FALSE)
-names(weed.sp3) <- "Weed.Species.3"
-
-weed.sp4 <- readWorksheet(wb, "Form 2 Visit 1", startRow = 20, startCol = 15,
-                          endRow = 20, endCol = 17, header = FALSE)
-names(weed.sp4) <- "Weed.Species.4"
-
+weed_species <- cbind(c("Spp_1", "Spp_2", "Spp_3", "Spp_4"), weed_species)
 
 # Animal pests------------------------------------------------------------------
-deadheart <- data.table::rbindlist(foreach::foreach(i = 6:15) %do% {
-  deadheart <- readWorksheet(wb, "Form 2 Visit 1", startRow = 15,
-                         startCol = as.numeric(paste(i)), endRow = 15,
-                         endCol = as.numeric(paste(i)), header = FALSE)
+deadheart <- data.table::rbindlist(foreach(i = 6:15) %do% {
+  readWorksheet(wb, "Form 2 Visit 1", startRow = 15,
+                startCol = as.numeric(paste(i)), endRow = 15,
+                endCol = as.numeric(paste(i)), header = FALSE)
 }
 )
 
-
-rat <- data.table::rbindlist(foreach::foreach(i = 6:15) %do% {
-  rat <- readWorksheet(wb, "Form 2 Visit 1", startRow = 16,
-                             startCol = as.numeric(paste(i)), endRow = 16,
-                             endCol = as.numeric(paste(i)), header = FALSE)
+## Check rat row numbers!
+rat <- data.table::rbindlist(foreach(i = 6:15) %do% {
+  readWorksheet(wb, "Form 2 Visit 1", startRow = 16,
+                startCol = as.numeric(paste(i)), endRow = 16,
+                endCol = as.numeric(paste(i)), header = FALSE)
 }
 )
 
-DH.Q1 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 28,
-                       startCol = 5,
-                       endRow = 28,
-                       endCol = 5,
-                       header = FALSE)
-names(DH.Q1) <- "DH.Q1"
+whitehead <- data.table::rbindlist(foreach(i = 6:15) %do% {
+  readWorksheet(wb, "Form 2 Visit 1", startRow =29,
+                startCol = as.numeric(paste(i)), endRow = 29,
+                endCol = as.numeric(paste(i)), header = FALSE)
+}
+)
 
-DH.Q2 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 28,
-                       startCol = 6,
-                       endRow = 28,
-                       endCol = 6,
-                       header = FALSE)
-names(DH.Q2) <- "DH.Q2"
+gall_midge <- data.table::rbindlist(foreach(i = 6:15) %do% {
+  readWorksheet(wb, "Form 2 Visit 1", startRow = 30,
+                startCol = as.numeric(paste(i)), endRow = 30,
+                endCol = as.numeric(paste(i)), header = FALSE)
+}
+)
 
-DH.Q3 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 28,
-                       startCol = 7,
-                       endRow = 28,
-                       endCol = 7,
-                       header = FALSE)
-names(DH.Q3) <- "DH.Q3"
-
-DH.Q4 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 28,
-                       startCol = 8,
-                       endRow = 28,
-                       endCol = 8,
-                       header = FALSE)
-names(DH.Q4) <- "DH.Q4"
-
-DH.Q5 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 28,
-                       startCol = 9,
-                       endRow = 28,
-                       endCol = 9,
-                       header = FALSE)
-names(DH.Q5) <- "DH.Q5"
-
-DH.Q6 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 28,
-                       startCol = 10,
-                       endRow = 28,
-                       endCol = 10,
-                       header = FALSE)
-names(DH.Q6) <- "DH.Q6"
-
-DH.Q7 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 28,
-                       startCol = 11,
-                       endRow = 28,
-                       endCol = 11,
-                       header = FALSE)
-names(DH.Q7) <- "DH.Q7"
-
-DH.Q8 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 28,
-                       startCol = 12,
-                       endRow = 28,
-                       endCol = 12,
-                       header = FALSE)
-names(DH.Q8) <- "DH.Q8"
-
-DH.Q9 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 28,
-                       startCol = 13,
-                       endRow = 28,
-                       endCol = 13,
-                       header = FALSE)
-names(DH.Q9) <- "DH.Q9"
-
-DH.Q10 <- readWorksheet(wb,
-                        "Form 2 Visit 1",
-                        startRow = 28,
-                        startCol = 14,
-                        endRow = 28,
-                        endCol = 14,
-                        header = FALSE)
-names(DH.Q10) <- "DH.Q10"
-
-WH.Q1 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 29,
-                       startCol = 5,
-                       endRow = 29,
-                       endCol = 5,
-                       header = FALSE)
-names(WH.Q1) <- "WH.Q1"
-
-WH.Q2 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 29,
-                       startCol = 6,
-                       endRow = 29,
-                       endCol = 6,
-                       header = FALSE)
-names(WH.Q2) <- "WH.Q2"
-
-WH.Q3 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 29,
-                       startCol = 7,
-                       endRow = 29,
-                       endCol = 7,
-                       header = FALSE)
-names(WH.Q3) <- "WH.Q3"
-
-WH.Q4 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 29,
-                       startCol = 8,
-                       endRow = 29,
-                       endCol = 8,
-                       header = FALSE)
-names(WH.Q4) <- "WH.Q4"
-
-WH.Q5 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 29,
-                       startCol = 9,
-                       endRow = 29,
-                       endCol = 9,
-                       header = FALSE)
-names(WH.Q5) <- "WH.Q5"
-
-WH.Q6 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 29,
-                       startCol = 10,
-                       endRow = 29,
-                       endCol = 10,
-                       header = FALSE)
-names(WH.Q6) <- "WH.Q6"
-
-WH.Q7 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 29,
-                       startCol = 11,
-                       endRow = 29,
-                       endCol = 11,
-                       header = FALSE)
-names(WH.Q7) <- "WH.Q7"
-
-WH.Q8 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 29,
-                       startCol = 12,
-                       endRow = 29,
-                       endCol = 12,
-                       header = FALSE)
-names(WH.Q8) <- "WH.Q8"
-
-WH.Q9 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 29,
-                       startCol = 13,
-                       endRow = 29,
-                       endCol = 13,
-                       header = FALSE)
-names(WH.Q9) <- "WH.Q9"
-
-WH.Q10 <- readWorksheet(wb,
-                        "Form 2 Visit 1",
-                        startRow = 29,
-                        startCol = 14,
-                        endRow = 29,
-                        endCol = 14,
-                        header = FALSE)
-names(WH.Q10) <- "WH.Q10"
-
-GM.Q1 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 30,
-                       startCol = 5,
-                       endRow = 30,
-                       endCol = 5,
-                       header = FALSE)
-names(GM.Q1) <- "GM.Q1"
-
-GM.Q2 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 30,
-                       startCol = 6,
-                       endRow = 30,
-                       endCol = 6,
-                       header = FALSE)
-names(GM.Q2) <- "GM.Q2"
-
-GM.Q3 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 30,
-                       startCol = 7,
-                       endRow = 30,
-                       endCol = 7,
-                       header = FALSE)
-names(GM.Q3) <- "GM.Q3"
-
-GM.Q4 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 30,
-                       startCol = 8,
-                       endRow = 30,
-                       endCol = 8,
-                       header = FALSE)
-names(GM.Q4) <- "GM.Q4"
-
-GM.Q5 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 30,
-                       startCol = 9,
-                       endRow = 30,
-                       endCol = 9,
-                       header = FALSE)
-names(GM.Q5) <- "GM.Q5"
-
-GM.Q6 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 30,
-                       startCol = 10,
-                       endRow = 30,
-                       endCol = 10,
-                       header = FALSE)
-names(GM.Q6) <- "GM.Q6"
-
-GM.Q7 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 30,
-                       startCol = 11,
-                       endRow = 30,
-                       endCol = 11,
-                       header = FALSE)
-names(GM.Q7) <- "GM.Q7"
-
-GM.Q8 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 30,
-                       startCol = 12,
-                       endRow = 30,
-                       endCol = 12,
-                       header = FALSE)
-names(GM.Q8) <- "GM.Q8"
-
-GM.Q9 <- readWorksheet(wb,
-                       "Form 2 Visit 1",
-                       startRow = 30,
-                       startCol = 13,
-                       endRow = 30,
-                       endCol = 13,
-                       header = FALSE)
-names(GM.Q9) <- "GM.Q9"
-
-GM.Q10 <- readWorksheet(wb,
-                        "Form 2 Visit 1",
-                        startRow = 30,
-                        startCol = 14,
-                        endRow = 30,
-                        endCol = 14,
-                        header = FALSE)
-names(GM.Q10) <- "GM.Q10"
 
 RT.Q1 <- readWorksheet(wb,
                        "Form 2 Visit 1",
