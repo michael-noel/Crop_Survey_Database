@@ -35,25 +35,19 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                "readr")) %dopar% {
   wb <- loadWorkbook(paste0(f))
   injuries <- vector(mode = "list")
-
-  # Extract data ---------------------------------------------------------------
-
-  extracted <- extract(wb)
-
-  itx <- iter(1:5)
-  injuries <- foreach(v = itx, .packages = "plyr") %do% {
-    injuries[[v]] <- join_all(extracted[[v]], type = "full")
-  }
-
-  write_csv(injuries[[1]], paste0(dsn_cleaned, "hq_injuries.csv"),
-            append = TRUE)
-  write_csv(injuries[[2]], paste0(dsn_cleaned, "weed_area.csv"), append = TRUE)
-  write_csv(injuries[[3]], paste0(dsn_cleaned, "weed_rank.csv"), append = TRUE)
-  write_csv(injuries[[4]], paste0(dsn_cleaned, "weed_spp.csv"), append = TRUE)
-  write_csv(injuries[[5]], paste0(dsn_cleaned, "systemic_injuries.csv"),
-            append = TRUE)
 }
 
 parallel::stopCluster(cl)
+
+write.csv(data.table::rbindlist(hq_injuries_out),
+          paste0("hill_quadrat_injuries_", filename, ".csv"))
+write.csv(data.table::rbindlist(systemic_out),
+          paste0("systemic_injuries_", filename, ".csv"))
+write.csv(data.table::rbindlist(weed_species_out),
+          paste0("weed_species_", filename, ".csv"))
+write.csv(data.table::rbindlist(weed_rank_out),
+          paste0("weed_rank_", filename, ".csv"))
+write.csv(data.table::rbindlist(weed_area_out),
+          paste0("weed_area_", filename, ".csv"))
 
 # eos
