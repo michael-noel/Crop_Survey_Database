@@ -1,11 +1,11 @@
-##############################################################################
+################################################################################
 # title         : Extract_WB.R;
 # purpose       : Extract data from Excel for data analysis;
 # producer      : prepared by A. Sparks;
 # last update   : in Towoomba, QLD, AUS, July 2016;
 # inputs        : crop health survey form2;
 # outputs       : crop health survey data ready for analysis;
-##############################################################################
+################################################################################
 
 extract <- function(f) {
   wb <- loadWorkbook(file.path(f))
@@ -23,20 +23,17 @@ extract <- function(f) {
     location <- XLConnect::readWorksheet(wb, sheet = "Form 1", startRow = 4,
                                          startCol = 9, endRow = 4, endCol = 18,
                                          header = FALSE)
-    names(location) <- "location"
 
     visit_date <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ",
                                                               v),
                                            startRow = 1, startCol = 11,
                                            endRow = 1, endCol = 12,
                                            header = FALSE)
-    names(visit_date) <- "visit_date"
 
     visit_no <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ", v),
                                          startRow = 1, startCol = 15,
                                          endRow = 1, endCol = 15,
                                          header = FALSE)
-    names(visit_no) <- "visit_no"
 
     field_no <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ", v),
                                          startRow = 2, startCol = 2,
@@ -45,21 +42,18 @@ extract <- function(f) {
     if (length(row(field_no)) == 0) {
       field_no[1, 1] <- NA
     }
-    names(field_no) <- "field_no"
 
     water_status <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ",
                                                                 v),
                                              startRow = 6, startCol = 12,
                                              endRow = 6, endCol = 12,
                                              header = FALSE)
-    names(water_status) <- "water_status"
 
     crop_stage <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ",
                                                               v),
                                            startRow = 6, startCol = 4,
                                            endRow = 6, endCol = 4,
                                            header = FALSE)
-    names(crop_stage) <- "crop_stage"
 
     general_information <- cbind(location, visit_date, visit_no, field_no,
                                  water_status, crop_stage, row.names = NULL)
@@ -254,39 +248,15 @@ extract <- function(f) {
     gi <- general_information[rep(seq_len(nrow(general_information)),
                                   each = nrow(sheath_rot)), ]
     # LIST hq_injuries ---------------------------------------------------------
-    hq_injuries[[v]] <- data.frame(`colnames<-`(cbind(gi, tillers, leaves,
-                                                      panicles, hill_quadrat,
-                                                      rat, silvershoot,
-                                                      whitehead, deadheart,
-                                                      leaffolder, leaf_miner,
-                                                      rice_hispa, whorl_maggot,
-                                                      other_defoliator,
-                                                      bacterial_blight,
-                                                      bacterial_leaf_streak,
-                                                      brown_spot, leaf_blast,
-                                                      leaf_scald,
-                                                      narrow_brown_spot,
-                                                      red_stripe, dirty_panicle,
-                                                      false_smut, neck_blast,
-                                                      sheath_blight,
-                                                      sheath_rot,
-                                                      row.names = NULL),
-                                                c(names(gi), "tillers", "leaves",
-                                                  "panicles", "hill_quadrat",
-                                                  "rat", "silvershoot",
-                                                  "whitehead", "deadheart",
-                                                  "leaffolder", "leaf_miner",
-                                                  "rice_hispa", "whorl_maggot",
-                                                  "other_defoliator",
-                                                  "bacterial_blight",
-                                                  "bacterial_leaf_streak",
-                                                  "brown_spot", "leaf_blast",
-                                                  "leaf_scald",
-                                                  "narrow_brown_spot",
-                                                  "red_stripe", "dirty_panicle",
-                                                  "false_smut", "neck_blast",
-                                                  "sheath_blight",
-                                                  "sheath_rot")))
+    hq_injuries[[v]] <- data.frame(gi, tillers, leaves, panicles, hill_quadrat,
+                                   rat, silvershoot, whitehead, deadheart,
+                                   leaffolder, leaf_miner, rice_hispa,
+                                   whorl_maggot, other_defoliator,
+                                   bacterial_blight, bacterial_leaf_streak,
+                                   brown_spot, leaf_blast, leaf_scald,
+                                   narrow_brown_spot, red_stripe, dirty_panicle,
+                                   false_smut, neck_blast, sheath_blight,
+                                   sheath_rot, row.names = NULL)
 
     # Weeds --------------------------------------------------------------------
     # weed above ---------------------------------------------------------------
@@ -300,7 +270,6 @@ extract <- function(f) {
                                header = FALSE)
     }
     )
-    names(weed_above) <- "weed_above"
 
     weed_below <- data.table::rbindlist(foreach(i = 3:5) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 63,
@@ -309,19 +278,15 @@ extract <- function(f) {
                                header = FALSE)
     }
     )
-    names(weed_below) <- "weed_below"
 
     gi <- general_information[rep(seq_len(nrow(general_information)),
                                   each = nrow(weed_below)), ]
 
     # LIST weed_area -----------------------------------------------------------
-    weed_area[[v]] <- data.frame(`colnames<-`(cbind(gi, weed_area_col,
-                                                    weed_above, weed_below,
-                                                    row.names = NULL),
-                                              c(names(gi), "weed_area",
-                                                "weed_above", "weed_below")))
+    weed_area[[v]] <- data.frame(gi, weed_area_col, weed_above, weed_below,
+                                 row.names = NULL)
 
-    # weed rank ------------------------------------------------------------------
+    # weed rank ----------------------------------------------------------------
 
     broad_leaf_rank <- data.table::rbindlist(foreach(i = 12:14) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
@@ -357,13 +322,8 @@ extract <- function(f) {
                                   each = nrow(small_rank)), ]
 
     # LIST weed_rank -----------------------------------------------------------
-    weed_rank[[v]] <- data.frame(`colnames<-`(cbind(gi, broad_leaf_rank,
-                                                    grass_rank,
-                                                    sedge_rank, small_rank,
-                                                    row.names = NULL),
-                                              c(names(gi), "broad_leaf_rank",
-                                                "grass_rank", "sedge_rank",
-                                                "small_weeds_rank")))
+    weed_rank[[v]] <- data.frame(gi, broad_leaf_rank, grass_rank, sedge_rank,
+                                 small_rank, row.names = NULL)
 
     # weed species -------------------------------------------------------------
 
@@ -379,12 +339,8 @@ extract <- function(f) {
                                   each = nrow(weed_species_cols)), ]
 
     # LIST weed_species --------------------------------------------------------
-    weed_species[[v]] <- data.frame(`colnames<-`(cbind(gi, c("Spp_1", "Spp_2",
-                                                             "Spp_3", "Spp_4"),
-                                                       weed_species_cols,
-                                                       row.names = NULL),
-                                                 c(names(gi), "spp_no.",
-                                                   "species")))
+    weed_species[[v]] <- data.frame(gi, c("Spp_1", "Spp_2", "Spp_3", "Spp_4"),
+                                    weed_species_cols, row.names = NULL)
 
     # Systemic injuries---------------------------------------------------------
 
@@ -434,25 +390,18 @@ extract <- function(f) {
                                   each = nrow(bugburn)), ]
 
     # LIST systemic_injuries ---------------------------------------------------
-    systemic_injuries[[v]] <- data.frame(`colnames<-`(cbind(gi, grassy_stunt,
-                                                            ragged_stunt,
-                                                            rice_tungro,
-                                                            yellowing_syndrome,
-                                                            hopperburn, bugburn,
-                                                            row.names = NULL),
-                                                      c(names(gi),
-                                                        "grassy_stunt",
-                                                        "ragged_stunt",
-                                                        "rice_tungro",
-                                                        "yellowing_syndrome",
-                                                        "hopperburn",
-                                                        "bugburn")))
+    systemic_injuries[[v]] <- data.frame(gi, grassy_stunt,
+                                         ragged_stunt,
+                                         rice_tungro,
+                                         yellowing_syndrome,
+                                         hopperburn, bugburn,
+                                         row.names = NULL)
   }
 
-  out <- list(hq_injuries, weed_area, weed_rank, weed_species, systemic_injuries)
+  out <- list(hq_injuries, weed_area, weed_rank, weed_species,
+              systemic_injuries)
 
   return(out)
 }
-
 
 #eos
