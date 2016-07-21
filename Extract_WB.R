@@ -58,6 +58,29 @@ extract <- function(f) {
     general_information <- cbind(location, visit_date, visit_no, field_no,
                                  water_status, crop_stage, row.names = NULL)
 
+    # Yield ----------------------------------------------------------------------
+    if (v == 1) {
+      yield <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
+        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 98,
+                                 startCol = as.numeric(paste(i)), endRow = 98,
+                                 endCol = as.numeric(paste(i)), header = FALSE)
+      }
+      )
+
+      moisture <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
+        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 99,
+                                 startCol = as.numeric(paste(i)), endRow = 99,
+                                 endCol = as.numeric(paste(i)), header = FALSE)
+      }
+      )
+
+      gi <- general_information[rep(seq_len(nrow(general_information)),
+                                    each = nrow(yield)), ][, -c(2:3, 5:6)]
+
+      # LIST yield ------------- ---------------------------------------------------
+      yield[[v]] <- data.frame(gi, yield, moisture, row.names = NULL)
+    }
+
     # Crop information ---------------------------------------------------------
 
     # Generic hill/quadrat count for final data frame
@@ -396,10 +419,11 @@ extract <- function(f) {
                                          yellowing_syndrome,
                                          hopperburn, bugburn,
                                          row.names = NULL)
+
   }
 
   out <- list(hq_injuries, weed_area, weed_rank, weed_species,
-              systemic_injuries)
+              systemic_injuries, yield)
 
   return(out)
 }
