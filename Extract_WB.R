@@ -7,7 +7,9 @@
 # outputs       : crop health survey data ready for analysis;
 ##############################################################################
 
-extract <- function(wb) {
+extract <- function(f) {
+  wb <- loadWorkbook(file.path(f))
+
   i <- NULL
   v <- NULL
 
@@ -27,19 +29,19 @@ extract <- function(wb) {
                                                               v),
                                            startRow = 1, startCol = 11,
                                            endRow = 1, endCol = 12,
-                                header = FALSE)
+                                           header = FALSE)
     names(visit_date) <- "visit_date"
 
     visit_no <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ", v),
                                          startRow = 1, startCol = 15,
                                          endRow = 1, endCol = 15,
-                              header = FALSE)
+                                         header = FALSE)
     names(visit_no) <- "visit_no"
 
     field_no <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ", v),
                                          startRow = 2, startCol = 2,
                                          endRow = 2, endCol = 2,
-                              header = FALSE)
+                                         header = FALSE)
     if (length(row(field_no)) == 0) {
       field_no[1, 1] <- NA
     }
@@ -49,14 +51,14 @@ extract <- function(wb) {
                                                                 v),
                                              startRow = 6, startCol = 12,
                                              endRow = 6, endCol = 12,
-                                  header = FALSE)
+                                             header = FALSE)
     names(water_status) <- "water_status"
 
     crop_stage <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ",
                                                               v),
                                            startRow = 6, startCol = 4,
                                            endRow = 6, endCol = 4,
-                                header = FALSE)
+                                           header = FALSE)
     names(crop_stage) <- "crop_stage"
 
     general_information <- cbind(location, visit_date, visit_no, field_no,
@@ -71,88 +73,88 @@ extract <- function(wb) {
 
     tillers <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 9,
-                    startCol = as.numeric(paste(i)), endRow = 9,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 9,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     # Leaves -------------------------------------------------------------------
     leaves <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 11,
-                    startCol = as.numeric(paste(i)), endRow = 11,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 11,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     # Panicles -----------------------------------------------------------------
     panicles <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 10,
-                    startCol = as.numeric(paste(i)), endRow = 10,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 10,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     # Animal pests -------------------------------------------------------------
     rat <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 16,
-                    startCol = as.numeric(paste(i)), endRow = 16,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 16,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     silvershoot <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 17,
-                    startCol = as.numeric(paste(i)), endRow = 17,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 17,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     deadheart <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 15,
-                    startCol = as.numeric(paste(i)), endRow = 15,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 15,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     whitehead <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 18,
-                    startCol = as.numeric(paste(i)), endRow = 18,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 18,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     leaffolder <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 21,
-                    startCol = as.numeric(paste(i)), endRow = 21,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 21,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     leaf_miner <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 22,
-                    startCol = as.numeric(paste(i)), endRow = 22,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 22,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     rice_hispa <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 23,
-                    startCol = as.numeric(paste(i)), endRow = 23,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 23,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     whorl_maggot <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 24,
-                    startCol = as.numeric(paste(i)), endRow = 24,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 24,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     other_defoliator <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 25,
-                    startCol = as.numeric(paste(i)), endRow = 25,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 25,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
@@ -160,92 +162,92 @@ extract <- function(wb) {
 
     bacterial_blight <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 35,
-                    startCol = as.numeric(paste(i)), endRow = 35,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 35,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     bacterial_leaf_streak <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 36,
-                    startCol = as.numeric(paste(i)), endRow = 36,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 36,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     brown_spot <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 37,
-                    startCol = as.numeric(paste(i)), endRow = 37,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 37,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     leaf_blast <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 38,
-                    startCol = as.numeric(paste(i)), endRow = 38,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 38,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     leaf_scald <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 39,
-                    startCol = as.numeric(paste(i)), endRow = 39,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 39,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     narrow_brown_spot <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 40,
-                    startCol = as.numeric(paste(i)), endRow = 40,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 40,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     red_stripe <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 41,
-                    startCol = as.numeric(paste(i)), endRow = 41,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 41,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     dirty_panicle <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 44,
-                    startCol = as.numeric(paste(i)), endRow = 44,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 44,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     false_smut <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 45,
-                    startCol = as.numeric(paste(i)), endRow = 45,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 45,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     dirty_panicle <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 44,
-                    startCol = as.numeric(paste(i)), endRow = 44,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 44,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     neck_blast <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 46,
-                    startCol = as.numeric(paste(i)), endRow = 46,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 46,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     sheath_blight <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 47,
-                    startCol = as.numeric(paste(i)), endRow = 47,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 47,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     sheath_rot <- data.table::rbindlist(foreach(i = 6:15) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 48,
-                    startCol = as.numeric(paste(i)), endRow = 48,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 48,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
@@ -293,18 +295,18 @@ extract <- function(wb) {
 
     weed_above <- data.table::rbindlist(foreach(i = 3:5) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 62,
-                    startCol = as.numeric(paste(i)),
-                    endRow = 62, endCol = as.numeric(paste(i)),
-                    header = FALSE)
+                               startCol = as.numeric(paste(i)),
+                               endRow = 62, endCol = as.numeric(paste(i)),
+                               header = FALSE)
     }
     )
     names(weed_above) <- "weed_above"
 
     weed_below <- data.table::rbindlist(foreach(i = 3:5) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 63,
-                    startCol = as.numeric(paste(i)),
-                    endRow = 63, endCol = as.numeric(paste(i)),
-                    header = FALSE)
+                               startCol = as.numeric(paste(i)),
+                               endRow = 63, endCol = as.numeric(paste(i)),
+                               header = FALSE)
     }
     )
     names(weed_below) <- "weed_below"
@@ -321,24 +323,35 @@ extract <- function(wb) {
 
     # weed rank ------------------------------------------------------------------
 
-    broad_leaf_rank <- XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
-                                     startRow = 62, startCol = 12,
-                                     endRow = 62, endCol = 12, header = FALSE)
+    broad_leaf_rank <- data.table::rbindlist(foreach(i = 12:14) %do% {
+      XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
+                               startRow = 62, startCol = i,
+                               endRow = 62, endCol = i, header = FALSE)
+    }
+    )
 
-    grass_rank <-  XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
-                                            startRow = 63, startCol = 12,
-                                            endRow = 63, endCol = 12,
-                                 header = FALSE)
+    grass_rank <- data.table::rbindlist(foreach(i = 12:14) %do% {
+      XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
+                               startRow = 63, startCol = i,
+                               endRow = 63, endCol = i, header = FALSE)
+    }
+    )
 
-    sedge_rank <- XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
-                                           startRow = 64, startCol = 12,
-                                           endRow = 64, endCol = 12,
-                                header = FALSE)
+    sedge_rank <- data.table::rbindlist(foreach(i = 12:14) %do% {
+      XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
+                               startRow = 64, startCol = i,
+                               endRow = 64, endCol = i,
+                               header = FALSE)
+    }
+    )
 
-    small_rank <- XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
-                                           startRow = 65, startCol = 12,
-                                           endRow = 65, endCol = 12,
-                                header = FALSE)
+    small_rank  <- data.table::rbindlist(foreach(i = 12:14) %do% {
+      XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
+                               startRow = 65, startCol = i,
+                               endRow = 65, endCol = i,
+                               header = FALSE)
+    }
+    )
 
     gi <- general_information[rep(seq_len(nrow(general_information)),
                                   each = nrow(small_rank)), ]
@@ -356,9 +369,9 @@ extract <- function(wb) {
 
     weed_species_cols <- data.table::rbindlist(foreach(i = 62:65) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
-                    startRow = as.numeric(paste(i)), startCol = 16,
-                    endRow = as.numeric(paste(i)), endCol = 16,
-                    header = FALSE)
+                               startRow = as.numeric(paste(i)), startCol = 16,
+                               endRow = as.numeric(paste(i)), endCol = 16,
+                               header = FALSE)
     }
     )
 
@@ -377,43 +390,43 @@ extract <- function(wb) {
 
     grassy_stunt <- data.table::rbindlist(foreach(i = 6:10) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 53,
-                    startCol = as.numeric(paste(i)), endRow = 53,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 53,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     ragged_stunt <- data.table::rbindlist(foreach(i = 6:10) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 54,
-                    startCol = as.numeric(paste(i)), endRow = 54,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 54,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     rice_tungro <- data.table::rbindlist(foreach(i = 6:10) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 55,
-                    startCol = as.numeric(paste(i)), endRow = 55,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 55,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     yellowing_syndrome <- data.table::rbindlist(foreach(i = 6:10) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 56,
-                    startCol = as.numeric(paste(i)), endRow = 56,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 56,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     hopperburn <- data.table::rbindlist(foreach(i = 6:10) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 30,
-                    startCol = as.numeric(paste(i)), endRow = 30,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 30,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
     bugburn <- data.table::rbindlist(foreach(i = 6:10) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 29,
-                    startCol = as.numeric(paste(i)), endRow = 29,
-                    endCol = as.numeric(paste(i)), header = FALSE)
+                               startCol = as.numeric(paste(i)), endRow = 29,
+                               endCol = as.numeric(paste(i)), header = FALSE)
     }
     )
 
