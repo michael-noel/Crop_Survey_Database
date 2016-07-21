@@ -24,6 +24,8 @@ extract <- function(f) {
                                          startCol = 9, endRow = 4, endCol = 18,
                                          header = FALSE)
 
+    season <- substr(dsn_raw[1], 57, 58)
+
     visit_date <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ",
                                                               v),
                                            startRow = 1, startCol = 11,
@@ -55,8 +57,9 @@ extract <- function(f) {
                                            endRow = 6, endCol = 4,
                                            header = FALSE)
 
-    general_information <- cbind(location, visit_date, visit_no, field_no,
-                                 water_status, crop_stage, row.names = NULL)
+    general_information <- cbind(location, season, visit_date, visit_no,
+                                 field_no, water_status, crop_stage,
+                                 row.names = NULL)
 
     # Yield ----------------------------------------------------------------------
     if (v == 1) {

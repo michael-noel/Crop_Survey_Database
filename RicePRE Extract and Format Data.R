@@ -50,6 +50,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                    # add names to columns ------------------------
 
                                    hq_injuries_names <- c("location",
+                                                          "season",
                                                           "visit_date",
                                                           "visit_no",
                                                           "field_no",
@@ -77,6 +78,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                           "sheath_rot")
 
                                    weed_area_names <- c("location",
+                                                        "season",
                                                         "visit_date",
                                                         "visit_no",
                                                         "field_no",
@@ -91,6 +93,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                         "weed_below")
 
                                    weed_rank_names <- c("location",
+                                                        "season",
                                                         "visit_date",
                                                         "visit_no",
                                                         "field_no",
@@ -111,6 +114,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                        "species")
 
                                    systemic_injury_names <- c("location",
+                                                              "season",
                                                               "visit_date",
                                                               "visit_no",
                                                               "field_no",
@@ -124,6 +128,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                               "bugburn")
 
                                    yield_names <- c("location",
+                                                    "season",
                                                     "field_no",
                                                     "yield",
                                                     "moisture")
