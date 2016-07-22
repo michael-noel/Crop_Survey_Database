@@ -13,7 +13,7 @@ extract <- function(f) {
   i <- NULL
   v <- NULL
 
-  hq_injuries <- weed_area <- weed_rank <- weed_species <-
+  hq_injuries <- yield <- weed_area <- weed_rank <- weed_species <-
     systemic_injuries <- vector(mode = "list")
 
   itx <- iter(1:4)
@@ -24,7 +24,7 @@ extract <- function(f) {
                                          startCol = 9, endRow = 4, endCol = 18,
                                          header = FALSE)
 
-    season <- substr(dsn_raw[1], 57, 58)
+    season <- substr(f, 57, 58)
 
     visit_date <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ",
                                                               v),
@@ -60,29 +60,6 @@ extract <- function(f) {
     general_information <- cbind(location, season, visit_date, visit_no,
                                  field_no, water_status, crop_stage,
                                  row.names = NULL)
-
-    # Yield ----------------------------------------------------------------------
-    if (v == 1) {
-      yield <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
-        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 98,
-                                 startCol = as.numeric(paste(i)), endRow = 98,
-                                 endCol = as.numeric(paste(i)), header = FALSE)
-      }
-      )
-
-      moisture <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
-        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 99,
-                                 startCol = as.numeric(paste(i)), endRow = 99,
-                                 endCol = as.numeric(paste(i)), header = FALSE)
-      }
-      )
-
-      gi <- general_information[rep(seq_len(nrow(general_information)),
-                                    each = nrow(yield)), ][, -c(2:3, 5:6)]
-
-      # LIST yield ------------- ---------------------------------------------------
-      yield[[v]] <- data.frame(gi, yield, moisture, row.names = NULL)
-    }
 
     # Crop information ---------------------------------------------------------
 
@@ -306,7 +283,7 @@ extract <- function(f) {
     )
 
     gi <- general_information[rep(seq_len(nrow(general_information)),
-                                  each = nrow(weed_below)), ]
+                                  each = nrow(weed_below)), ][, -c(6:10)]
 
     # LIST weed_area -----------------------------------------------------------
     weed_area[[v]] <- data.frame(gi, weed_area_col, weed_above, weed_below,
@@ -422,6 +399,29 @@ extract <- function(f) {
                                          yellowing_syndrome,
                                          hopperburn, bugburn,
                                          row.names = NULL)
+
+    # Yield ----------------------------------------------------------------------
+    if (v == 1) {
+      crop_cut <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
+        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 98,
+                                 startCol = as.numeric(paste(i)), endRow = 98,
+                                 endCol = as.numeric(paste(i)), header = FALSE)
+      }
+      )
+
+      moisture <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
+        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 99,
+                                 startCol = as.numeric(paste(i)), endRow = 99,
+                                 endCol = as.numeric(paste(i)), header = FALSE)
+      }
+      )
+
+      gi <- general_information[rep(seq_len(nrow(general_information)),
+                                    each = nrow(crop_cut)), ][, -c(3:4, 6:7)]
+
+      # LIST yield ------------- -----------------------------------------------
+      yield <- data.frame(gi, crop_cut, moisture, row.names = NULL)
+    }
 
   }
 

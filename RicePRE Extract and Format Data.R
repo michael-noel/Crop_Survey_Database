@@ -38,17 +38,9 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
 
                                  extracted <- extract(f)
 
-                                 # Join the five types of injuries from each
-                                 # location into five respective data frames
-                                 # from a list of data frames for each injury
-                                 itx <- iter(1:6)
-                                 injuries <- foreach(v = itx, .packages = c("plyr", "iotools")) %do% {
-                                   injuries[[v]] <- join_all(extracted[[v]], type = "full")
-                                 }
-
+                                 # Write out to disk ---------------------------
                                  if (f == dsn_raw[1]) {
-                                   # add names to columns ------------------------
-
+                                   # create column names -----------------------
                                    hq_injuries_names <- c("location",
                                                           "season",
                                                           "visit_date",
@@ -56,6 +48,10 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                           "field_no",
                                                           "water_status",
                                                           "crop_stage",
+                                                          "tillers",
+                                                          "leaves",
+                                                          "panicles",
+                                                          "hill_quadrat_no",
                                                           "rat", "silvershoot",
                                                           "whitehead",
                                                           "deadheart",
@@ -82,12 +78,6 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                         "visit_date",
                                                         "visit_no",
                                                         "field_no",
-                                                        "water_status",
-                                                        "crop_stage",
-                                                        "tillers",
-                                                        "leaves",
-                                                        "panicles",
-                                                        "hill_quadrat",
                                                         "weed_area",
                                                         "weed_above",
                                                         "weed_below")
@@ -105,6 +95,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                         "small_weeds_rank")
 
                                    weed_spp_names <- c("location",
+                                                       "season",
                                                        "visit_date",
                                                        "visit_no",
                                                        "field_no",
@@ -133,11 +124,16 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                     "yield",
                                                     "moisture")
 
+                                   cat(noquote(paste0(paste0(yield_names,
+                                                             collapse = ","),
+                                                      "\n")),
+                                       file = paste0(path.expand(dsn_cleaned),
+                                                     "yield.csv"))
                                    cat(noquote(paste0(paste0(hq_injuries_names,
                                                              collapse = ","),
                                                       "\n")),
                                        file = paste0(path.expand(dsn_cleaned),
-                                                     "hq_injuries.csv"))
+                                                     "injuries.csv"))
                                    cat(noquote(paste0(paste0(weed_area_names,
                                                              collapse = ","),
                                                       "\n")),
@@ -158,62 +154,37 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                       "\n")),
                                        file = paste0(path.expand(dsn_cleaned),
                                                      "systemic_injuries.csv"))
-                                   cat(noquote(paste0(paste0(yield_names,
-                                                             collapse = ","),
-                                                      "\n")),
-                                       file = paste0(path.expand(dsn_cleaned),
-                                                     "yield.csv"))
                                  }
 
-                                 # Write CSV files out to disk -----------------
-                                 write.csv.raw(
-                                   as.data.frame(injuries[1]),
-                                   file = paste0(
-                                     path.expand(
-                                       dsn_cleaned),
-                                     "hq_injuries.csv"),
-                                   append = TRUE)
+                                 # Write yield CSV -----------------------------
 
-                                 write.csv.raw(
-                                   as.data.frame(injuries[2]),
-                                   file = paste0(
-                                     path.expand(
-                                       dsn_cleaned),
-                                     "weed_area.csv"),
-                                   append = TRUE)
+                                 iotools::write.csv.raw(as.data.frame(extracted[6]),
+                                                        file = paste0(path.expand(dsn_cleaned),
+                                                                      "yield.csv"),
+                                                        append = TRUE)
 
-                                 write.csv.raw(
-                                   as.data.frame(injuries[3]),
-                                   file = paste0(
-                                     path.expand(
-                                       dsn_cleaned),
-                                     "weed_rank.csv"),
-                                   append = TRUE)
+                                 # Collapse injury lists into single data frames
+                                 extracted <- extracted[-6] # drop yield
 
-                                 write.csv.raw(
-                                   as.data.frame(injuries[4]),
-                                   file = paste0(
-                                     path.expand(
-                                       dsn_cleaned),
-                                     "weed_spp.csv"),
-                                   append = TRUE)
+                                 itx <- iter(1:5)
 
-                                 write.csv.raw(
-                                   as.data.frame(injuries[5]),
-                                   file = paste0(
-                                     path.expand(
-                                       dsn_cleaned),
-                                     "systemic_injuries.csv"),
-                                   append = TRUE)
+                                 injuries <- foreach(w = itx, .packages = c("plyr", "iotools")) %do% {
+                                   injuries[[w]] <- join_all(extracted[[w]], type = "full")
 
-                                 write.csv.raw(
-                                   as.data.frame(injuries[6]),
-                                   file = paste0(
-                                     path.expand(
-                                       dsn_cleaned),
-                                     "yield.csv"),
-                                   append = TRUE)
+                                 }
+
+                                 csv_names <- c("injuries.csv", "weed_area.csv",
+                                                "weed_rank.csv", "weed_spp.csv",
+                                                "systemic_injuries.csv")
+
+                                 write.csv.raw(injuries[[1]], file = paste0(path.expand(dsn_cleaned), csv_names[[1]]), append = TRUE)
+                                 write.csv.raw(injuries[[2]], file = paste0(path.expand(dsn_cleaned), csv_names[[2]]), append = TRUE)
+                                 write.csv.raw(injuries[[3]], file = paste0(path.expand(dsn_cleaned), csv_names[[3]]), append = TRUE)
+                                 write.csv.raw(injuries[[4]], file = paste0(path.expand(dsn_cleaned), csv_names[[4]]), append = TRUE)
+                                 write.csv.raw(injuries[[5]], file = paste0(path.expand(dsn_cleaned), csv_names[[5]]), append = TRUE)
                                }
+
+
 
 parallel::stopCluster(cl)
 
