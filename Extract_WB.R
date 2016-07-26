@@ -26,6 +26,8 @@ extract <- function(f) {
 
     season <- substr(f, 57, 58)
 
+    year <- substr(f, 53, 56)
+
     visit_date <- XLConnect::readWorksheet(wb, sheet = paste0("Form 2 Visit ",
                                                               v),
                                            startRow = 1, startCol = 11,
@@ -57,7 +59,7 @@ extract <- function(f) {
                                            endRow = 6, endCol = 4,
                                            header = FALSE)
 
-    general_information <- cbind(location, season, visit_date, visit_no,
+    general_information <- cbind(location, year, season, visit_date, visit_no,
                                  field_no, water_status, crop_stage,
                                  row.names = NULL)
 
@@ -261,6 +263,8 @@ extract <- function(f) {
                                    false_smut, neck_blast, sheath_blight,
                                    sheath_rot, row.names = NULL)
 
+    rm(gi)
+
     # Weeds --------------------------------------------------------------------
     # weed above ---------------------------------------------------------------
     weed_area_col <- rep(c("A", "B", "C"), 2)
@@ -283,11 +287,12 @@ extract <- function(f) {
     )
 
     gi <- general_information[rep(seq_len(nrow(general_information)),
-                                  each = nrow(weed_below)), ][, -c(6:10)]
+                                  each = nrow(weed_below)), ]
 
     # LIST weed_area -----------------------------------------------------------
-    weed_area[[v]] <- data.frame(gi, weed_area_col, weed_above, weed_below,
-                                 row.names = NULL)
+    weed_area[[v]] <- data.frame(gi[, 1:6], weed_area_col, weed_above,
+                                 weed_below, row.names = NULL)
+    rm(gi)
 
     # weed rank ----------------------------------------------------------------
 
@@ -327,6 +332,7 @@ extract <- function(f) {
     # LIST weed_rank -----------------------------------------------------------
     weed_rank[[v]] <- data.frame(gi, broad_leaf_rank, grass_rank, sedge_rank,
                                  small_rank, row.names = NULL)
+    rm(gi)
 
     # weed species -------------------------------------------------------------
 
@@ -344,6 +350,7 @@ extract <- function(f) {
     # LIST weed_species --------------------------------------------------------
     weed_species[[v]] <- data.frame(gi, c("Spp_1", "Spp_2", "Spp_3", "Spp_4"),
                                     weed_species_cols, row.names = NULL)
+    rm(gi)
 
     # Systemic injuries---------------------------------------------------------
 
@@ -399,6 +406,7 @@ extract <- function(f) {
                                          yellowing_syndrome,
                                          hopperburn, bugburn,
                                          row.names = NULL)
+    rm(gi)
 
     # Yield ----------------------------------------------------------------------
     if (v == 1) {
@@ -417,7 +425,7 @@ extract <- function(f) {
       )
 
       gi <- general_information[rep(seq_len(nrow(general_information)),
-                                    each = nrow(crop_cut)), ][, -c(3:4, 6:7)]
+                                    each = nrow(crop_cut)), ][, c(1:3, 6)]
 
       # LIST yield ------------- -----------------------------------------------
       yield <- data.frame(gi, crop_cut, moisture, row.names = NULL)
