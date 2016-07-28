@@ -7,10 +7,10 @@
 # outputs       : RICE-PRE Experiment data ready for analysis;
 ##############################################################################
 
-dsn_raw <- list.files("~/Google Drive/Data/RICE-PRE/RICE-PRE_2014WS/Excel Sheets",
+dsn_raw <- list.files("~/Google Drive/Data/RICE-PRE/RICE-PRE_2013WS/NEG_2013WS",
                       full.names = TRUE)
 dsn_cleaned <- "~/Google Drive/Data/RICE-PRE/Cleaned/"
-source("Extract_WB.R")
+source("Extract_WB_Negros.R")
 
 # Libraries --------------------------------------------------------------------
 
@@ -29,7 +29,8 @@ doParallel::registerDoParallel(cl)
 # Loop for all files in dsn_raw ------------------------------------------------
 
 itw <- iter(dsn_raw)
-foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
+
+test <- foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                "readr")) %dopar% {
 
                                  injuries <- vector(mode = "list")
@@ -169,26 +170,26 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                                       "yield.csv"),
                                                         append = TRUE)
 
-                                 # Collapse injury lists into single data frames
-                                 extracted <- extracted[-6] # drop yield
+# Collapse injury lists into single data frames
+extracted <- extracted[-6] # drop yield
 
-                                 itx <- iter(1:5)
+itx <- iter(1:5)
 
-                                 injuries <- foreach(w = itx, .packages = c("plyr", "iotools")) %do% {
-                                   injuries[[w]] <- join_all(extracted[[w]], type = "full")
+injuries <- foreach(w = itx, .packages = c("plyr", "iotools")) %do% {
+  injuries[[w]] <- join_all(extracted[[w]], type = "full")
 
-                                 }
+}
 
-                                 csv_names <- c("injuries.csv", "weed_area.csv",
-                                                "weed_rank.csv", "weed_spp.csv",
-                                                "systemic_injuries.csv")
+csv_names <- c("injuries.csv", "weed_area.csv",
+               "weed_rank.csv", "weed_spp.csv",
+               "systemic_injuries.csv")
 
-                                 write.csv.raw(injuries[[1]], file = paste0(path.expand(dsn_cleaned), csv_names[[1]]), append = TRUE)
-                                 write.csv.raw(injuries[[2]], file = paste0(path.expand(dsn_cleaned), csv_names[[2]]), append = TRUE)
-                                 write.csv.raw(injuries[[3]], file = paste0(path.expand(dsn_cleaned), csv_names[[3]]), append = TRUE)
-                                 write.csv.raw(injuries[[4]], file = paste0(path.expand(dsn_cleaned), csv_names[[4]]), append = TRUE)
-                                 write.csv.raw(injuries[[5]], file = paste0(path.expand(dsn_cleaned), csv_names[[5]]), append = TRUE)
-                               }
+write.csv.raw(injuries[[1]], file = paste0(path.expand(dsn_cleaned), csv_names[[1]]), append = TRUE)
+write.csv.raw(injuries[[2]], file = paste0(path.expand(dsn_cleaned), csv_names[[2]]), append = TRUE)
+write.csv.raw(injuries[[3]], file = paste0(path.expand(dsn_cleaned), csv_names[[3]]), append = TRUE)
+write.csv.raw(injuries[[4]], file = paste0(path.expand(dsn_cleaned), csv_names[[4]]), append = TRUE)
+write.csv.raw(injuries[[5]], file = paste0(path.expand(dsn_cleaned), csv_names[[5]]), append = TRUE)
+}
 
 
 
