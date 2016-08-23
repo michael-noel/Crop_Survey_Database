@@ -104,19 +104,16 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                        "spp_no.",
                                                        "species")
 
-                                   systemic_injury_names <- c("location",
+                                   insect_sweep_names <- c("location",
                                                               "season",
                                                               "visit_date",
                                                               "visit_no",
                                                               "field_no",
                                                               "water_status",
                                                               "crop_stage",
-                                                              "grassy_stunt",
-                                                              "ragged_stunt",
-                                                              "rice_tungro",
-                                                              "yellowing_syndrome",
-                                                              "hopperburn",
-                                                              "bugburn")
+                                                              "GLH", "BPH",
+                                                           "White_backed_Planthopper",
+                                                              "RC")
 
                                    yield_names <- c("location",
                                                     "season",
