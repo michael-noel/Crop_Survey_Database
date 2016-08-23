@@ -5,6 +5,11 @@
 # last update   : in Towoomba, QLD, AUS, July 2016;
 # inputs        : crop health survey form2;
 # outputs       : crop health survey data ready for analysis;
+# note          : Visit date for visit 3 is set to 1971-01-01 because it is
+#                 missing and R will not convert to NA and leave as a date
+#                 class. This causes issues when joining all data frames
+#                 together to write out to CSV. So it's set to a "date".
+#                 Proceeed accordingly.
 ################################################################################
 
 extract <- function(f) {
@@ -24,7 +29,7 @@ extract <- function(f) {
                                          startCol = 9, endRow = 4, endCol = 18,
                                          header = FALSE)
 
-    season <- substr(f, 56, 57)
+    season <- substr(f, 57, 58)
 
     year <- substr(f, 53, 56)
 
@@ -62,6 +67,7 @@ extract <- function(f) {
     general_information <- cbind(location, year, season, visit_date, visit_no,
                                  field_no, water_status, crop_stage,
                                  row.names = NULL)
+
 
     # Crop information ---------------------------------------------------------
 
@@ -411,15 +417,15 @@ extract <- function(f) {
     # Yield ----------------------------------------------------------------------
     if (v == 1) {
       crop_cut <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
-        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 98,
-                                 startCol = as.numeric(paste(i)), endRow = 98,
+        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 99,
+                                 startCol = as.numeric(paste(i)), endRow = 99,
                                  endCol = as.numeric(paste(i)), header = FALSE)
       }
       )
 
       moisture <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
-        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 99,
-                                 startCol = as.numeric(paste(i)), endRow = 99,
+        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 100,
+                                 startCol = as.numeric(paste(i)), endRow = 100,
                                  endCol = as.numeric(paste(i)), header = FALSE)
       }
       )

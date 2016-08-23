@@ -10,7 +10,7 @@
 dsn_raw <- list.files("~/Google Drive/Data/RICE-PRE/RICE-PRE_2013DS/Excel Sheets",
                       full.names = TRUE)
 dsn_cleaned <- "~/Google Drive/Data/RICE-PRE/Cleaned/"
-source("Extract_WB.R")
+source("Extract_WB_Negros_2013WS.R")
 
 # Libraries --------------------------------------------------------------------
 
@@ -29,6 +29,7 @@ doParallel::registerDoParallel(cl)
 # Loop for all files in dsn_raw ------------------------------------------------
 
 itw <- iter(dsn_raw)
+
 foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                "readr")) %dopar% {
 
@@ -42,6 +43,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                  if (f == dsn_raw[1]) {
                                    # create column names -----------------------
                                    hq_injuries_names <- c("location",
+                                                          "year",
                                                           "season",
                                                           "visit_date",
                                                           "visit_no",
@@ -74,6 +76,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                           "sheath_rot")
 
                                    weed_area_names <- c("location",
+                                                        "year",
                                                         "season",
                                                         "visit_date",
                                                         "visit_no",
@@ -83,6 +86,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                         "weed_below")
 
                                    weed_rank_names <- c("location",
+                                                        "year",
                                                         "season",
                                                         "visit_date",
                                                         "visit_no",
@@ -95,6 +99,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                         "small_weeds_rank")
 
                                    weed_spp_names <- c("location",
+                                                       "year",
                                                        "season",
                                                        "visit_date",
                                                        "visit_no",
@@ -105,6 +110,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                        "species")
 
                                    systemic_injury_names <- c("location",
+                                                              "year",
                                                               "season",
                                                               "visit_date",
                                                               "visit_no",
@@ -119,6 +125,7 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                                               "bugburn")
 
                                    yield_names <- c("location",
+                                                    "year",
                                                     "season",
                                                     "field_no",
                                                     "yield",
@@ -167,9 +174,13 @@ foreach(f = itw, .packages = c("XLConnect", "iterators", "foreach",
                                  extracted <- extracted[-6] # drop yield
 
                                  itx <- iter(1:5)
+                                 w <- NULL
 
-                                 injuries <- foreach(w = itx, .packages = c("plyr", "iotools")) %do% {
-                                   injuries[[w]] <- join_all(extracted[[w]], type = "full")
+                                 injuries <- foreach(w = itx,
+                                                     .packages = c("plyr",
+                                                                   "iotools")) %do% {
+                                   injuries[[w]] <- join_all(extracted[[w]],
+                                                             type = "full")
 
                                  }
 

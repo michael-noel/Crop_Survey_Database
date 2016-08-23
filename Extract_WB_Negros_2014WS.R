@@ -24,7 +24,7 @@ extract <- function(f) {
                                          startCol = 9, endRow = 4, endCol = 18,
                                          header = FALSE)
 
-    season <- substr(f, 56, 57)
+    season <- substr(f, 57, 58)
 
     year <- substr(f, 53, 56)
 
@@ -271,17 +271,17 @@ extract <- function(f) {
     names(weed_area_col) <- "weed_area"
 
     weed_above <- data.table::rbindlist(foreach(i = 3:5) %do% {
-      XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 62,
+      XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 61,
                                startCol = as.numeric(paste(i)),
-                               endRow = 62, endCol = as.numeric(paste(i)),
+                               endRow = 61, endCol = as.numeric(paste(i)),
                                header = FALSE)
     }
     )
 
     weed_below <- data.table::rbindlist(foreach(i = 3:5) %do% {
-      XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 63,
+      XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v), startRow = 62,
                                startCol = as.numeric(paste(i)),
-                               endRow = 63, endCol = as.numeric(paste(i)),
+                               endRow = 62, endCol = as.numeric(paste(i)),
                                header = FALSE)
     }
     )
@@ -298,30 +298,30 @@ extract <- function(f) {
 
     broad_leaf_rank <- data.table::rbindlist(foreach(i = 12:14) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
-                               startRow = 62, startCol = i,
-                               endRow = 62, endCol = i, header = FALSE)
+                               startRow = 61, startCol = i,
+                               endRow = 61, endCol = i, header = FALSE)
     }
     )
 
     grass_rank <- data.table::rbindlist(foreach(i = 12:14) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
-                               startRow = 63, startCol = i,
-                               endRow = 63, endCol = i, header = FALSE)
+                               startRow = 62, startCol = i,
+                               endRow = 62, endCol = i, header = FALSE)
     }
     )
 
     sedge_rank <- data.table::rbindlist(foreach(i = 12:14) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
-                               startRow = 64, startCol = i,
-                               endRow = 64, endCol = i,
+                               startRow = 63, startCol = i,
+                               endRow = 63, endCol = i,
                                header = FALSE)
     }
     )
 
     small_rank  <- data.table::rbindlist(foreach(i = 12:14) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
-                               startRow = 65, startCol = i,
-                               endRow = 65, endCol = i,
+                               startRow = 64, startCol = i,
+                               endRow = 64, endCol = i,
                                header = FALSE)
     }
     )
@@ -336,7 +336,7 @@ extract <- function(f) {
 
     # weed species -------------------------------------------------------------
 
-    weed_species_cols <- data.table::rbindlist(foreach(i = 62:65) %do% {
+    weed_species_cols <- data.table::rbindlist(foreach(i = 61:64) %do% {
       XLConnect::readWorksheet(wb, paste0("Form 2 Visit ", v),
                                startRow = as.numeric(paste(i)), startCol = 16,
                                endRow = as.numeric(paste(i)), endCol = 16,
@@ -411,15 +411,15 @@ extract <- function(f) {
     # Yield ----------------------------------------------------------------------
     if (v == 1) {
       crop_cut <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
-        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 98,
-                                 startCol = as.numeric(paste(i)), endRow = 98,
+        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 99,
+                                 startCol = as.numeric(paste(i)), endRow = 99,
                                  endCol = as.numeric(paste(i)), header = FALSE)
       }
       )
 
       moisture <- data.table::rbindlist(foreach(i = c(14:15, 18:19, 22:23)) %do% {
-        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 99,
-                                 startCol = as.numeric(paste(i)), endRow = 99,
+        XLConnect::readWorksheet(wb, paste0("Form 1"), startRow = 100,
+                                 startCol = as.numeric(paste(i)), endRow = 100,
                                  endCol = as.numeric(paste(i)), header = FALSE)
       }
       )

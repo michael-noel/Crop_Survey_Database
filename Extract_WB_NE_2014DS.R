@@ -16,7 +16,7 @@ extract <- function(f) {
   hq_injuries <- yield <- weed_area <- weed_rank <- weed_species <-
     systemic_injuries <- vector(mode = "list")
 
-  itx <- iter(1:4)
+  itx <- iter(2:3)
   foreach(v = itx, .packages = c("XLConnect", "data.table")) %do% {
 
     # General information ------------------------------------------------------
@@ -24,7 +24,7 @@ extract <- function(f) {
                                          startCol = 9, endRow = 4, endCol = 18,
                                          header = FALSE)
 
-    season <- substr(f, 56, 57)
+    season <- substr(f, 57, 58)
 
     year <- substr(f, 53, 56)
 

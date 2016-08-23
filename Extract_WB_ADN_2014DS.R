@@ -24,7 +24,7 @@ extract <- function(f) {
                                          startCol = 9, endRow = 4, endCol = 18,
                                          header = FALSE)
 
-    season <- substr(f, 56, 57)
+    season <- substr(f, 57, 58)
 
     year <- substr(f, 53, 56)
 
