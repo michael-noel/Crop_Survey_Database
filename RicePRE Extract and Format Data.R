@@ -10,7 +10,7 @@
 dsn_raw <- list.files("~/Google Drive/Data/RICE-PRE/RICE-PRE_2013DS/Excel Sheets",
                       full.names = TRUE)
 dsn_cleaned <- "~/Google Drive/Data/RICE-PRE/Cleaned/"
-source("Extract_WB_Negros_2013WS.R")
+source("Extract_WB.R")
 
 # Libraries --------------------------------------------------------------------
 
